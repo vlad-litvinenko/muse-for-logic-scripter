@@ -1,7 +1,7 @@
 # The Triadex Muse algorithm for Logic Pro X Scripter plug-in.
 
 Originally implemented by J. Donald Tillman and used with his kind permission.
-You'll find emulation, extensive explanation and links to the Muse manuals at Donald's website. http://www.till.com/articles/muse
+You'll find emulation, extensive explanation and links to the Muse manuals at Donald's website: http://www.till.com/articles/muse
 
 The actual Muse was invented in 1969 by Marvin Minsky and Edward Fredkin at MIT.
 
