@@ -8,7 +8,7 @@ The actual Muse was invented in 1969 by Marvin Minsky and Edward Fredkin at MIT.
 ### Usage
 1. Load Scripter MIDI Plug-In
 2. Open Script Editor
-3. Copy and paste the code
+3. Copy and paste the code from MuseForLogicProXScripter.js
 4. Click RunScript button
 
 Multiple instances of the Scripter can be loaded to the same track allowing polyphony.
