@@ -14,8 +14,18 @@ var interval = [0, 0, 0, 0];
 var rest = 1; // 0: rest, 1: normal
 var velocity = 100;
 var basePitch = 60;
+
+var modes = [
+	[0, 2, 4, 5, 7, 9, 11, 12], //Ionian (Major)
+	[0, 2, 4, 6, 7, 9, 11, 10], //Lydian
+	[0, 2, 3, 5, 7, 9, 10, 12], //Dorian
+	[0, 1, 3, 5, 7, 8, 10, 12], //Phrygian
+	[0, 2, 4, 5, 7, 9, 10, 12], //Mixolydian
+	[0, 2, 3, 5, 7, 8, 10, 12], //Aeolian (Minor)
+	[0, 1, 3, 5, 6, 8, 10, 12], //Locrian
+];
 		
-var majorScale = [0, 2, 4, 5, 7, 9, 11, 12];
+var modeIndex = 0;
 
 var previousNote = null;
 var currentNote = null;
@@ -68,7 +78,7 @@ function makeNote() {
 	// in the Muse, CBA address into a major scale, 0..7, and D raises it an octave
 	// so the octave C note gets repeated
 	var dcba = getNoteBits();
-	var pitch = majorScale[0x7 & dcba] + 12 * (dcba >> 3);
+	var pitch = modes[modeIndex][0x7 & dcba] + 12 * (dcba >> 3);
 	
 	previousNote = currentNote;
 	
@@ -118,6 +128,8 @@ for (var i = 1; i <= 31; i++) {
 	sliderRows.push('B' + i);
 }
 
+var modeNames = ["Ionian", "Lydian", "Dorian", "Phrygian", "Mixolydian", "Aeolian", "Locrian"];
+
 var pitchLabels = [];
 var octave = 2;
 var note = 7;
@@ -139,6 +151,7 @@ var PluginParameters = [
 						{name:'Rest', type:'menu', valueStrings:['Rest', 'Normal'], defaultValue:1},
 						{name:'Velocity', type:'linear', numberOfSteps:127, minValue:0, maxValue:127,defaultValue:100},
 						{name:'Pitch', type:'menu', valueStrings:pitchLabels, defaultValue:17},
+						{name:'Mode', type:'menu', valueStrings:modeNames, defaultValue:0},
 						{name:'Channel', type:'linear', numberOfSteps:15, minValue:1,maxValue:16, defaultValue:1},
 						{name:'Interval', type:'text'},
 						{name:'A', type:'menu', valueStrings:sliderRows, defaultValue:0},
@@ -165,15 +178,16 @@ function ParameterChanged(param, value) {
 	else if (param == 1) { rest = value }
 	else if (param == 2) { velocity = value }
 	else if (param == 3) { basePitch = value + 43 }
-	else if (param == 4) { channel = value }
-	else if (param == 6) { onInterval(0, value) }
-	else if (param == 7) { onInterval(1, value) }
-	else if (param == 8) { onInterval(2, value) }
-	else if (param == 9) { onInterval(3, value) }
-	else if (param == 11) { onTheme(0, value) }
-	else if (param == 12) { onTheme(1, value) }
-	else if (param == 13) { onTheme(2, value) }
-	else if (param == 14) { onTheme(3, value) }
+	else if (param == 4) { modeIndex = value }
+	else if (param == 5) { channel = value }
+	else if (param == 7) { onInterval(0, value) }
+	else if (param == 8) { onInterval(1, value) }
+	else if (param == 9) { onInterval(2, value) }
+	else if (param == 10) { onInterval(3, value) }
+	else if (param == 12) { onTheme(0, value) }
+	else if (param == 13) { onTheme(1, value) }
+	else if (param == 14) { onTheme(2, value) }
+	else if (param == 15) { onTheme(3, value) }
 }
 
 var NeedsTimingInfo = true;
