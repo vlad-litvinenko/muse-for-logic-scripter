@@ -2,7 +2,7 @@
 //
 //Originally implemented by J. Donald Tillman: http://www.till.com/articles/muse
 //
-//Adapted for Logic Pro Scripter by Vlad Lytvynenko: vla2020@icloud.com
+//Adapted for Logic Pro Scripter and extended by Vlad Lytvynenko: vla2020@icloud.com
 //
 //The actual Muse was invented in 1969 by Marvin Minsky and Edward Fredkin at MIT.
 //
