@@ -16,12 +16,12 @@ var velocity = 100;
 var basePitch = 60;
 
 var modes = [
-	[0, 2, 4, 5, 7, 9, 11, 12], //Ionian (Major)
+	[0, 2, 4, 5, 7, 9, 11, 12], //Ionian
 	[0, 2, 4, 6, 7, 9, 11, 10], //Lydian
 	[0, 2, 3, 5, 7, 9, 10, 12], //Dorian
 	[0, 1, 3, 5, 7, 8, 10, 12], //Phrygian
 	[0, 2, 4, 5, 7, 9, 10, 12], //Mixolydian
-	[0, 2, 3, 5, 7, 8, 10, 12], //Aeolian (Minor)
+	[0, 2, 3, 5, 7, 8, 10, 12], //Aeolian
 	[0, 1, 3, 5, 6, 8, 10, 12], //Locrian
 ];
 		
@@ -153,6 +153,7 @@ var PluginParameters = [
 						{name:'Pitch', type:'menu', valueStrings:pitchLabels, defaultValue:17},
 						{name:'Mode', type:'menu', valueStrings:modeNames, defaultValue:0},
 						{name:'Channel', type:'linear', numberOfSteps:15, minValue:1,maxValue:16, defaultValue:1},
+						{name:'Roll the Dice!', type:'momentary'},
 						{name:'Interval', type:'text'},
 						{name:'A', type:'menu', valueStrings:sliderRows, defaultValue:0},
 						{name:'B', type:'menu', valueStrings:sliderRows, defaultValue:0},
@@ -162,8 +163,8 @@ var PluginParameters = [
 						{name:'W', type:'menu', valueStrings:sliderRows, defaultValue:0},
 						{name:'X', type:'menu', valueStrings:sliderRows, defaultValue:0},
 						{name:'Y', type:'menu', valueStrings:sliderRows, defaultValue:0},
-						{name:'Z', type:'menu', valueStrings:sliderRows, defaultValue:0}
-					]
+						{name:'Z', type:'menu', valueStrings:sliderRows, defaultValue:0},
+					];
 
 function onInterval(index, val) {
 	interval[index] = val
@@ -173,6 +174,22 @@ function onTheme(index, val) {
 	theme[index] = val
 }
 
+function onRollDaDice() {
+	var intervals = ["A", "B", "C", "D"];
+	for (var i = 0; i < intervals.length; i++) {
+		var value = Math.floor(Math.random() * sliderRows.length)	
+		onInterval(i, value);
+		SetParameter(intervals[i], value);
+	}
+	
+	var themes = ["W", "X", "Y", "Z"];
+	for (var j = 0; j < themes.length; j++) {
+		var value = Math.floor(Math.random() * sliderRows.length)	
+		onInterval(j, value);
+		SetParameter(themes[j], value);
+	}
+}
+
 function ParameterChanged(param, value) {
 	if (param == 0) { reset() }
 	else if (param == 1) { rest = value }
@@ -180,14 +197,15 @@ function ParameterChanged(param, value) {
 	else if (param == 3) { basePitch = value + 43 }
 	else if (param == 4) { modeIndex = value }
 	else if (param == 5) { channel = value }
-	else if (param == 7) { onInterval(0, value) }
-	else if (param == 8) { onInterval(1, value) }
-	else if (param == 9) { onInterval(2, value) }
-	else if (param == 10) { onInterval(3, value) }
-	else if (param == 12) { onTheme(0, value) }
-	else if (param == 13) { onTheme(1, value) }
-	else if (param == 14) { onTheme(2, value) }
-	else if (param == 15) { onTheme(3, value) }
+	else if (param == 6) { onRollDaDice() }
+	else if (param == 8) { onInterval(0, value) }
+	else if (param == 9) { onInterval(1, value) }
+	else if (param == 10) { onInterval(2, value) }
+	else if (param == 11) { onInterval(3, value) }
+	else if (param == 13) { onTheme(0, value) }
+	else if (param == 14) { onTheme(1, value) }
+	else if (param == 15) { onTheme(2, value) }
+	else if (param == 16) { onTheme(3, value) }
 }
 
 var NeedsTimingInfo = true;
