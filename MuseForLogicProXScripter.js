@@ -215,15 +215,17 @@ var recentBeat = 0
 var recentOn = null;
 
 function sendOff() {
-	var off = new NoteOff(recentOn)
-	off.send()
+	if (recentOn != null) {
+		var off = new NoteOff(recentOn)
+		off.send()
+		recentOn = null;
+	}
 }
 
 function ProcessMIDI() {
 	var info = GetTimingInfo()
-	if (!info.playing && recentOn != null) {
+	if (!info.playing) {
 		sendOff()
-		recentOn = null;
 		return 
 	}
 	
