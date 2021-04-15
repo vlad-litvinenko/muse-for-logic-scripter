@@ -221,8 +221,9 @@ function sendOff() {
 
 function ProcessMIDI() {
 	var info = GetTimingInfo()
-	if (!info.playing) {
+	if (!info.playing && recentOn != null) {
 		sendOff()
+		recentOn = null;
 		return 
 	}
 	
