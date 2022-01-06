@@ -5,6 +5,9 @@ You'll find the Muse emulation, extensive explanation and links to the manuals a
 
 The actual Muse was invented in 1969 by Marvin Minsky and Edward Fredkin at MIT.
 
+- [Example 1](https://www.instagram.com/p/CVhkU9zAoMk/)
+- [Example 2](https://www.instagram.com/p/CJ_ceEvhcCD/)
+
 ### Usage
 1. Load Scripter MIDI Plug-In
 2. Open Script Editor
