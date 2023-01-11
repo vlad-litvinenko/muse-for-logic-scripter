@@ -17,6 +17,6 @@ The actual Muse was invented in 1969 by Marvin Minsky and Edward Fredkin at MIT.
 Multiple instances of the Scripter can be loaded to the same track allowing polyphony.
 
 If you're using multi-timbral instrument, you can route different instances of the script to different
-channels with Cannel setting. Make sure to have track channel set to All.
+channels with Channel setting. Make sure to have track channel set to All.
 
 Because this version is tempo synced and driven by DAW playback, controls such as start/hold/tempo are not implemented.
