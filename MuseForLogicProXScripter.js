@@ -1,3 +1,4 @@
+//
 //Triadex Muse Algorithm ########################################################
 //
 //Originally implemented by J. Donald Tillman: http://www.till.com/articles/muse
@@ -31,15 +32,16 @@ var previousNote = null;
 var currentNote = null;
 
 function reset() {
-	count32 = 1;
-	count6 = 0;
-	shiftregister = 0;
-	currentNote = null;
+	count32 = 1
+	count6 = 0
+	shiftregister = 0
+	currentNote = null
+	ri = 0
 }
 
 function step() {
-	click();
-	makeNote();
+	click()
+	makeNote()
 }
 
 // advances the 5-bit binary counter, the divide-by-6 counter,
@@ -47,14 +49,14 @@ function step() {
 function click() {
 	// get the XNOR value for the shift register from the previous state
 	// (need to double check this behavior with a real Muse)
-	var newbit = 1;
+	var newbit = 1
 	for (var i = 0; i < 4; i++) {
-	    newbit ^= select(theme[i]);
+	    newbit ^= select(theme[i])
 	}
 
 	// increment the 5-bit counter
 	// bit 0 is "C 1/2" which is the clock signal in the actual Muse
-	count32 = 0x1f & (count32 + 1);
+	count32 = 0x1f & (count32 + 1)
 
 	// the clock signal going zero triggers the divide-by-6 counter
 	// and the shift register
@@ -123,6 +125,49 @@ function select(i) {
 
 //######################################################################
 
+//The rhythm generation algorythm. ##################################### 
+//Based on Christoffel Words generation
+
+function chrhythm(onsets) {
+	var l = 16
+	var x = l - onsets, b = x
+	var y = onsets, a = y
+	
+	var r = [1]
+	while (a != b) {
+		if (a > b) {
+			r.push(1)
+			b += x
+		}
+		else {
+			r.push(0)
+			a += y
+		}
+	}
+
+	r.push(0)
+	
+	while (r.length < l) {
+		r = r.concat(r)
+	}
+
+	return r
+}
+
+//######################################################################
+
+var straight = [1]
+var isStraight = true
+var chOnsets = 7
+var r = straight
+var ri = 0
+
+// For straight mode we multiply TimingInfo.blockEndBeat by 10 and divide by 5
+// so catching the point of half a beat, i.e. 1/8.
+// For christoffel rhythm we need 1/16, so multiplier will be 100 and base 25.
+var multiplier = 10
+var base = 5
+
 var sliderRows = ['OFF', 'ON', 'C 1/2', 'C1', 'C2', 'C4', 'C8', 'C3', 'C6'];
 for (var i = 1; i <= 31; i++) {
 	sliderRows.push('B' + i);
@@ -146,25 +191,32 @@ while (pitchLabels.length < 42) {
 	}
 }
 
-var PluginParameters = [	
-						{name:'Reset', type:'momentary'},
-						{name:'Rest', type:'menu', valueStrings:['Rest', 'Normal'], defaultValue:1},
-						{name:'Velocity', type:'linear', numberOfSteps:127, minValue:0, maxValue:127,defaultValue:100},
-						{name:'Pitch', type:'menu', valueStrings:pitchLabels, defaultValue:17},
-						{name:'Mode', type:'menu', valueStrings:modeNames, defaultValue:0},
-						{name:'Channel', type:'linear', numberOfSteps:15, minValue:1,maxValue:16, defaultValue:1},
-						{name:'Roll the Dice!', type:'momentary'},
-						{name:'Interval', type:'text'},
-						{name:'A', type:'menu', valueStrings:sliderRows, defaultValue:0},
-						{name:'B', type:'menu', valueStrings:sliderRows, defaultValue:0},
-						{name:'C', type:'menu', valueStrings:sliderRows, defaultValue:0},
-						{name:'D', type:'menu', valueStrings:sliderRows, defaultValue:0},
-						{name:'Theme', type:'text'},
-						{name:'W', type:'menu', valueStrings:sliderRows, defaultValue:0},
-						{name:'X', type:'menu', valueStrings:sliderRows, defaultValue:0},
-						{name:'Y', type:'menu', valueStrings:sliderRows, defaultValue:0},
-						{name:'Z', type:'menu', valueStrings:sliderRows, defaultValue:0},
-					];
+function parameters() { 
+	return [	
+			{name:'Reset', type:'momentary'},
+			{name:'Rest', type:'menu', valueStrings:['Rest', 'Normal'], defaultValue:1},
+			{name:'Velocity', type:'linear', numberOfSteps:127, minValue:0, maxValue:127,defaultValue:100},
+			{name:'Pitch', type:'menu', valueStrings:pitchLabels, defaultValue:17},
+			{name:'Mode', type:'menu', valueStrings:modeNames, defaultValue:0},
+			{name:'Channel', type:'linear', numberOfSteps:15, minValue:1,maxValue:16, defaultValue:1},
+			{name:'Roll the Dice!', type:'momentary'},
+			{name:'Interval', type:'text'},
+			{name:'A', type:'menu', valueStrings:sliderRows, defaultValue:0},
+			{name:'B', type:'menu', valueStrings:sliderRows, defaultValue:0},
+			{name:'C', type:'menu', valueStrings:sliderRows, defaultValue:0},
+			{name:'D', type:'menu', valueStrings:sliderRows, defaultValue:0},
+			{name:'Theme', type:'text'},
+			{name:'W', type:'menu', valueStrings:sliderRows, defaultValue:0},
+			{name:'X', type:'menu', valueStrings:sliderRows, defaultValue:0},
+			{name:'Y', type:'menu', valueStrings:sliderRows, defaultValue:0},
+			{name:'Z', type:'menu', valueStrings:sliderRows, defaultValue:0},
+			{name:'Rhythm', type:'text'},
+			{name:'Type', type:'menu', valueStrings:['Straight', 'Christoffel'], defaultValue:0},
+			{name:'Onsets', type:'linear', numberOfSteps:12, minValue:3, maxValue:15, defaultValue:chOnsets, hidden:isStraight},
+	];
+}
+
+var PluginParameters = parameters()
 
 function onInterval(index, val) {
 	interval[index] = val
@@ -190,6 +242,32 @@ function onRollDaDice() {
 	}
 }
 
+function onRhythmType(value) {
+	var newIsStraight = value == 0; 
+	if (newIsStraight != isStraight) {
+		isStraight = newIsStraight
+		PluginParameters = parameters()
+		UpdatePluginParameters()
+	}
+	if (isStraight) {
+		r = straight
+		multiplier = 10
+		base = 5
+	}
+	else {
+		onChrOnsets(chOnsets)
+		multiplier = 100
+		base = 25
+	}
+}
+
+function onChrOnsets(value) {
+	chOnsets = value
+	if (!isStraight) {
+		r = chrhythm(value)
+	}
+}
+
 function ParameterChanged(param, value) {
 	if (param == 0) { reset() }
 	else if (param == 1) { rest = value }
@@ -206,7 +284,10 @@ function ParameterChanged(param, value) {
 	else if (param == 14) { onTheme(1, value) }
 	else if (param == 15) { onTheme(2, value) }
 	else if (param == 16) { onTheme(3, value) }
+	else if (param == 18) { onRhythmType(value) }
+	else if (param == 19) { onChrOnsets(value) }
 }
+
 
 var NeedsTimingInfo = true;
 
@@ -229,9 +310,6 @@ function ProcessMIDI() {
 		return 
 	}
 	
-	var multiplier = 10 
-	var base = 5
-	
 	var end = Math.floor(info.blockEndBeat * multiplier)
 	if (end % base > 0) {
 		return
@@ -239,18 +317,25 @@ function ProcessMIDI() {
 	if (info.cycling) {
 		var loopStart = Math.floor(info.leftCycleBeat * multiplier)
 		var loopEnd = Math.floor(info.rightCycleBeat * multiplier)
-		if (end == loopStart && recentBeat == loopEnd) {
+		if (end == loopStart && recentBeat  == loopEnd) {
 			return
 		}
 	}
 	
 	if (end != recentBeat) {
 		recentBeat = end 
+		if (r[ri]) {
+			step()
+		}
+		else {
+			currentNote = null;
+		}
 		
-		step()
+		ri ++
+		ri %= r.length
 		
-		if (previousNote != currentNote) {
-			sendOff()
+		if (previousNote != currentNote ) {
+			sendOff() 
 		}
 		else {
 			return
@@ -262,6 +347,6 @@ function ProcessMIDI() {
 			on.channel = channel
 			on.sendAtBeat(recentBeat / multiplier)
 			recentOn = on
-		}
-	} 
-} 
+		} 
+	}
+}
