@@ -176,7 +176,7 @@ for (var i = 1; i <= 31; i++) {
 var modeNames = ["Ionian", "Lydian", "Dorian", "Phrygian", "Mixolydian", "Aeolian", "Locrian"];
 
 var pitchLabels = [];
-var octave = 2;
+var octave = 1;
 var note = 7;
 var notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 while (pitchLabels.length < 42) {
